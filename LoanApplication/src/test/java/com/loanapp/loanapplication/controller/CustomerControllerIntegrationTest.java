@@ -1,8 +1,6 @@
 package com.loanapp.loanapplication.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -14,8 +12,8 @@ import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
 import com.loanapp.loanapplication.repository.CustomerRepository;
+import com.loanapp.loanapplication.service.LoanService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.lang.reflect.Array;
-import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = LoanApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CustomerControllerIntegrationTest {
 
+    @Autowired
+    private LoanService loanService;
     @LocalServerPort
     private int port;
     @Autowired
@@ -65,25 +64,40 @@ class CustomerControllerIntegrationTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
-    @Disabled("Disabled due to handling issues for Customer/Loan and Loan/LocalDateTime relations")
     @Test
     void getAll() throws JsonProcessingException {
-        String customersJson = mapToJson(allCustomers);
+        List<Customer> customerList = allCustomers;
+        for (Customer customer : customerList) {
+            customer.setLoanList(loanService.getApprovedLoansById(customer.getTckn()));
+        }
+        String customersJson = mapToJson(customerList);
         String _all = "/customer/all";
 
         String responseBodyAsJson = testRestTemplate.getForObject(formFullURLWithPort(_all), String.class);
         assertThat(responseBodyAsJson).isEqualTo(customersJson);
     }
 
-    @Disabled("Disabled due to handling issues for Customer/Loan and Loan/LocalDateTime relations")
     @Test
     void getByTckn() throws JsonProcessingException {
         Customer customer = allCustomers.get(0);
-        customer.setLoanList(loanListOf850);
+        customer.setLoanList(approvedLoanListOf850);
         String _gettckn = "/customer/get?tckn=10000000850";
 
         String responseJson = testRestTemplate.getForObject(formFullURLWithPort(_gettckn), String.class);
         assertThat(mapToJson(customer)).isEqualTo(responseJson);
+    }
+
+    @Test
+    void getByTckn_TcknDoesNotExist_ThrowNotFoundException() throws Exception {
+        Customer customer = allCustomers.get(0);
+        customer.setLoanList(approvedLoanListOf850);
+        String _gettckn = "/customer/get?tckn=12345678910";
+
+        mockMvc.perform(get(_gettckn))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException))
+                .andExpect(result -> assertEquals("Customer tckn: 12345678910 not found!", result.getResolvedException().getMessage()));
+
     }
 
     @Test
@@ -241,11 +255,8 @@ class CustomerControllerIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         String responseContentAsString = response.getContentAsString();
 
-        //TODO IMPROVEMENT: Parse response JSON to List<Loan> and validate it. Currently only comparing them as strings.
-        String expectedLoansAsString = "[{\"loanAmount\":20000.0,\"approvalDate\":\"2021-03-08T21:38:39.161\",\"approvalStatus\":true},{\"loanAmount\":10000.0,\"approvalDate\":\"2022-02-12T20:52:08.164\",\"approvalStatus\":true}]";
+        String expectedLoansAsString = mapToJson(approvedLoanListOf850);
         assertEquals(expectedLoansAsString, responseContentAsString);
-
-        //List<Loan> responseList = objectMapper.readValue(responseContentAsString, new TypeReference<List<Loan>>() {});
     }
 
     @Test
@@ -266,9 +277,8 @@ class CustomerControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         String responseContentAsString = response.getContentAsString();
-        System.out.println(responseContentAsString);
-        //TODO IMPROVEMENT: Parse response JSON to List<Loan> and validate it. Currently only comparing them as strings.
-        String expectedLoansAsString = "[{\"loanAmount\":20000.0,\"approvalDate\":\"2021-03-08T21:38:39.161\",\"approvalStatus\":true},{\"loanAmount\":0.0,\"approvalDate\":\"2022-01-16T22:33:52.164\",\"approvalStatus\":false},{\"loanAmount\":10000.0,\"approvalDate\":\"2022-02-12T20:52:08.164\",\"approvalStatus\":true}]";
+
+        String expectedLoansAsString = mapToJson(loanListOf850);
         assertEquals(expectedLoansAsString, responseContentAsString);
     }
 
@@ -323,6 +333,9 @@ class CustomerControllerIntegrationTest {
     private String mapToJson(Object object) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+        objectMapper.findAndRegisterModules();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        objectMapper.setDateFormat(dateFormat);
         return objectMapper.writeValueAsString(object);
     }
 
@@ -348,5 +361,7 @@ class CustomerControllerIntegrationTest {
                                                                new Customer("Hayes","Willis",10000000010L,"1724644137",4887D));
     private static List<Loan> loanListOf850 = Arrays.asList(new Loan(stringToDate("2021-03-08 21:38:39.161"),true,20000D, allCustomers.get(0)),
             new Loan(stringToDate("2022-01-16 22:33:52.164"),false,0D, allCustomers.get(0)),
+            new Loan(stringToDate("2022-02-12 20:52:08.164"),true,10000d, allCustomers.get(0)));
+    private static List<Loan> approvedLoanListOf850 = Arrays.asList(new Loan(stringToDate("2021-03-08 21:38:39.161"),true,20000D, allCustomers.get(0)),
             new Loan(stringToDate("2022-02-12 20:52:08.164"),true,10000d, allCustomers.get(0)));
 }
