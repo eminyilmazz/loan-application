@@ -1,5 +1,5 @@
-##About
----
+About
+===
 
 ---
 
@@ -9,7 +9,7 @@ Soul purpose of this project is to test my knowledge, research, and overcome my 
 &nbsp;&nbsp;&nbsp;&nbsp;This is a backend service for loan application. 
 It is designed to expose RESTful API sticking to the standards as much as possible.
 
-####Tech Stack:
+**Tech Stack:**
 1. Java 8
 2. Spring Boot 2.6.3
 3. Spring Data JPA
@@ -38,7 +38,8 @@ quickly.
 &nbsp;&nbsp;&nbsp;&nbsp;Architecture of the service is also done in n-layered design. This helped to achieve separation of components
 such as service, repository, controller, model.
 
-##How To Run and Requirements
+How To Run and Requirements
+===
 
 ---
 
@@ -58,7 +59,8 @@ such as service, repository, controller, model.
 &nbsp;&nbsp;&nbsp;&nbsp;If you don't want to run with maven cmd commands, open the project as a maven project with your IDE.  
 &nbsp;&nbsp;&nbsp;&nbsp;Don't forget to run it with maven clean install.
 
-##Diagrams
+Diagrams
+===
 
 ---
 **UML Diagram of components of the program.**
@@ -66,13 +68,15 @@ such as service, repository, controller, model.
 
 ![application_uml](.\loanapplication_uml.png)
 
-###Database Schema
+Database Schema
+---
 
 ---
 
 ![database_schema](.\database_schema.png)
 
-##Improvements
+Improvements
+===
 
 ---
 * On service level, there are some unnecessary cross dependencies. In the future, I plan to optimize it
@@ -83,7 +87,8 @@ JSON Strings. This is a go around solution for serialization / deserialization a
 
 
 
-##Other
+Other
+===
 
 ---
 
