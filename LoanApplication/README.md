@@ -66,14 +66,14 @@ Diagrams
 **UML Diagram of components of the program.**
 
 
-![application_uml](.\loanapplication_uml.png)
+![application_uml](https://github.com/eminyilmazz/loan-application/blob/main/LoanApplication/loanapplication_uml.png)
 
 Database Schema
 ---
 
 ---
 
-![database_schema](.\database_schema.png)
+![database_schema](https://github.com/eminyilmazz/loan-application/blob/main/LoanApplication/database_schema.png)
 
 Improvements
 ===
