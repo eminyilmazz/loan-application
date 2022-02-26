@@ -39,7 +39,7 @@ public class Customer implements Serializable {
     private double monthlySalary;
 
     @Transient
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Loan> loanList;
 
     public Customer(String name, String lastName, Long tckn, String phoneNumber, double monthlySalary) {

@@ -28,7 +28,7 @@ public class Loan {
     private Double loanAmount;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "customer_tckn", referencedColumnName = "tckn")
     @ApiModelProperty(name = "Customer TCKN", required = true, notes = "MUST be 11 digits number, Refers to owner of the loan", example = "12345678910")
     private Customer customer;
