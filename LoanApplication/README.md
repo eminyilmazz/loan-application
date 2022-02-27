@@ -3,10 +3,10 @@ About
 
 ---
 
-&nbsp;&nbsp;&nbsp;&nbsp;This is Spring Boot project is developed for PayCore Java Spring Bootcamp by Patika.dev.  
+This is Spring Boot project is developed for PayCore Java Spring Bootcamp by Patika.dev.  
 The Soul purpose of this project is to test my knowledge, research, and overcome my weaknesses.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;This is a backend service for loan application. 
+This is a backend service for loan application. 
 It is designed to expose RESTful API sticking to the standards as much as possible.
 
 **Tech Stack:**
@@ -20,22 +20,22 @@ It is designed to expose RESTful API sticking to the standards as much as possib
 
 **Tech preferences**  
 
-&nbsp;&nbsp;&nbsp;&nbsp;**RabbitMQ:** is a commonly used AMQP message broker. I preferred it
+**RabbitMQ:** is a commonly used AMQP message broker. I preferred it
 due to its simplicity and compatibility on both small and bigger scales. It is used to simulate an SMS Service that is supposedly
 called on loan approval.  
   
-&nbsp;&nbsp;&nbsp;&nbsp;**PostgreSQL:** PostgreSQL is a powerful, open source object-relational database system.
+**PostgreSQL:** PostgreSQL is a powerful, open source object-relational database system.
 Being object-relational served better for my purposes and dependencies over other databases.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;**Maven:** Maven is a build automation, project management and comprehension tool. Maven is preferred
+**Maven:** Maven is a build automation, project management and comprehension tool. Maven is preferred
 over other technologies for its enhanced dependency and plugin management.
 
-&nbsp;&nbsp;&nbsp;&nbsp;**Spring Data JPA:** This Spring technology is used with hibernate ORM to build a simple persistence layer
+**Spring Data JPA:** This Spring technology is used with hibernate ORM to build a simple persistence layer
 quickly.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;**Swagger:** Swagger is used for API documentation following OpenAPI 3 specifications.
+**Swagger:** Swagger is used for API documentation following OpenAPI 3 specifications.
 
-&nbsp;&nbsp;&nbsp;&nbsp;Architecture of the service is also done in n-layered design. This helped to achieve the separation of components
+Architecture of the service is also done in n-layered design. This helped to achieve the separation of components
 such as service, repository, controller, model.
 
 How To Run and Requirements
