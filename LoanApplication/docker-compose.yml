@@ -1,0 +1,35 @@
+version: '3.1'
+services:
+  loan-application-service:
+    image: loanapplication/loan-application-service
+    build: ./
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - rabbitmq
+      - postgres-db
+    links:
+      - rabbitmq
+      - postgres-db
+    environment:
+        - spring.datasource.url=jdbc:postgresql://host.docker.internal:5432/loan-application
+        - spring.rabbitmq.host=host.docker.internal
+
+  postgres-db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=loan-application
+
+  rabbitmq:
+    image: rabbitmq:3.9.13-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
