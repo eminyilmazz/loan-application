@@ -29,15 +29,16 @@ public class CustomerController {
 
     @Autowired
     private LoanService loanService;
+
     /**
-     * @apiNote GetMapping for all customers.
      * @return Iterable<Customer>
+     * @apiNote GetMapping for all customers.
      */
     @ApiOperation(value = "Get all customers")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Fetched customers successfully", response = Customer.class, responseContainer = "ResponseEntity")})
     @GetMapping("/all")
-    public List<Customer> getAll(){
+    public List<Customer> getAll() {
         List<Customer> customers = customerService.getAll();
         List<Loan> loanList;
         for (Customer customer : customers) {
@@ -46,10 +47,11 @@ public class CustomerController {
         }
         return customers;
     }
+
     /**
-     * @apiNote GetMapping for Customer.
      * @param tckn As a request parameter.
      * @return ResponseEntity<Customer>
+     * @apiNote GetMapping for Customer.
      */
     @ApiOperation(value = "Get customer for given TCKN")
     @ApiResponses(value = {
@@ -57,30 +59,20 @@ public class CustomerController {
             @ApiResponse(code = 404, message = "Customer not found.")})
     @GetMapping("/get")
     public ResponseEntity<Customer> getByTckn(@RequestParam(name = "tckn") @ApiParam(name = "tckn",
-                                              type = "Long", required = true, example = "12345678910") Long tckn){
+            type = "Long", required = true, example = "12345678910") Long tckn) {
         TcknValidator.validate(tckn);
         List<Loan> loanList = loanService.getApprovedLoansById(tckn);
         Customer customer = customerService.getByTckn(tckn);
         customer.setLoanList(loanList);
         return ResponseEntity.status(HttpStatus.OK).body(customer);
     }
+
     /**
-     * @apiNote Adds a Customer to database. Customer TCKN and phone number are validated.
      * @param customerDto as a request body.
      * @return A generic ResponseEntity<> - If adding customer is successful, status is OK, else BAD_REQUEST.
+     * @apiNote Adds a Customer to database. Customer TCKN and phone number are validated.
      */
 
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(
-//                    name = "customerDto",
-//                    dataTypeClass = CustomerDto.class,
-//                    examples = @Example(
-//                            value = {
-//                                    @ExampleProperty(value = "{'tckn' : 12345678910,\n" +
-//                                                              "'name' : 'Emin',\n" +
-//                                                              "'lastName' : 'Yilmaz',\n" +
-//                                                              "'phoneNumber' : '1234567890'\n" +
-//                                                              "'monthlySalary' : 1234}", mediaType = "application/json")}))})
     @PostMapping("/add")
     @ApiOperation(value = "Add a customer")
     @ApiResponses(value = {
@@ -90,10 +82,11 @@ public class CustomerController {
         TcknValidator.validate(customerDto.getTckn());
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.addCustomer(customerDto));
     }
+
     /**
-     * @apiNote Updates an already existing Customer. Customer TCKN and phone number are validated.
      * @param customerDto as a request body.
      * @return ResponseEntity<Customer> - If updating the customer is successful, status is OK, else NOT_FOUND.
+     * @apiNote Updates an already existing Customer. Customer TCKN and phone number are validated.
      */
     @ApiOperation(value = "Update an existing customer")
     @ApiResponses(value = {
@@ -103,10 +96,11 @@ public class CustomerController {
     public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody CustomerDto customerDto) {
         return ResponseEntity.status(HttpStatus.OK).body(customerService.updateCustomer(customerDto));
     }
+
     /**
-     * @apiNote DeleteMapping for an existing Customer.
      * @param tckn as a request parameter.
      * @return A generic ResponseEntity<> - If to be deleted customer exists, returns an OK status. Else NOT_FOUND.
+     * @apiNote DeleteMapping for an existing Customer.
      */
     @ApiOperation(value = "Delete a customer")
     @ApiResponses(value = {
@@ -114,32 +108,34 @@ public class CustomerController {
             @ApiResponse(code = 400, message = "Not found. TCKN does not exist.")})
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteCustomer(@RequestParam(name = "tckn") @ApiParam(name = "tckn", type = "Long",
-                                            required = true, example = "12345678910") Long tckn) {
+            required = true, example = "12345678910") Long tckn) {
         customerService.deleteCustomer(tckn);
         return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted.");
     }
+
     /**
+     * @param tckn as a request parameter. Value is validated to be 11 digits number.
+     * @return ResponseEntity<Map < Double, Boolean>> - Keys of the returned map is the loan amount. It is equal to 0D if it is declined.
+     * Values of the returned map is th Boolean value of the approval status of the application.
      * @apiNote This API is to apply for loan. If the provided Customer does not in the customer table, it is saved. Else
      * does not update it and throws IllegalArgumentException.
-     * @param tckn as a request parameter. Value is validated to be 11 digits number.
-     * @return ResponseEntity<Map<Double, Boolean>> - Keys of the returned map is the loan amount. It is equal to 0D if it is declined.
-     * Values of the returned map is th Boolean value of the approval status of the application.
      */
     @ApiOperation(value = "Apply loan with customer tckn")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Loan application is processed successfully", response = Map.class, responseContainer = "ResponseEntity"),
             @ApiResponse(code = 400, message = "Bad request. TCKN is not valid."),
             @ApiResponse(code = 404, message = "Customer not found.")})
-    @GetMapping ("/loan/apply")
+    @GetMapping("/loan/apply")
     public ResponseEntity<Map<Double, Boolean>> applyLoan(@RequestParam(name = "tckn") @ApiParam(name = "tckn", type = "Long",
-                                                          required = true, example = "12345678910") Long tckn) {
+            required = true, example = "12345678910") Long tckn) {
         TcknValidator.validate(tckn);
         return ResponseEntity.ok(loanService.applyLoan(tckn));
     }
+
     /**
-     * @apiNote This API is to get the history of loan applications of a customer.
      * @param objectNode fields: tckn, approved (optional)
-     * @return if approved field in the objectNode is true, returns only approved loans as a LoanDto list. Else, all of them.
+     * @return if approved field in the objectNode is true, returns only approved loans as a ResponseEntitiy of a Loan list. Else, all of them.
+     * @apiNote This API is to get the history of loan applications of a customer.
      */
     @ApiOperation(value = "Fetch customer's loan history with TCKN")
     @ApiResponses(value = {
@@ -148,7 +144,7 @@ public class CustomerController {
             @ApiResponse(code = 404, message = "Customer not found.")})
     @GetMapping("/loan/history")
     @ResponseBody
-    public ResponseEntity<List<Loan>> getLoans (@RequestBody @ApiParam(name = "objectNode", example = "{\"tckn\" : 12345678910, \"approved\" : \"true\"}") ObjectNode objectNode) {
+    public ResponseEntity<List<Loan>> getLoans(@RequestBody @ApiParam(name = "objectNode", example = "{\"tckn\" : 12345678910, \"approved\" : \"true\"}") ObjectNode objectNode) {
         return ResponseEntity.status(HttpStatus.OK).body(loanService.getLoans(objectNode));
     }
 }

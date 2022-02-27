@@ -4,14 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.loanapp.loanapplication.exception.IllegalTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
-import com.loanapp.loanapplication.exception.TcknValidator;
 import com.loanapp.loanapplication.messaging.SmsProducer;
-import com.loanapp.loanapplication.messaging.SmsService;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
 import com.loanapp.loanapplication.repository.LoanRepository;
-import org.aspectj.weaver.ast.Not;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +37,7 @@ class LoanServiceImplTest {
 
     @Test
     void applyLoan_with1000CreditScore_And9000Salary() {
-        Customer customer = new Customer("Dummy", "Test",12345678910L, "1234567890",9000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 9000D);
         Loan expectedLoan = new Loan(1L, 36000D, customer, true);
         Map<Double, Boolean> expectedLoanMap = new HashMap<>();
         expectedLoanMap.put(36000D, true);
@@ -65,7 +61,7 @@ class LoanServiceImplTest {
 
     @Test
     void applyLoan_with800CreditScore_And9000Salary() {
-        Customer customer = new Customer("Dummy", "Test",12345678800L, "1234567890",9000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678800L, "1234567890", 9000D);
         Loan expectedLoan = new Loan(1L, 20000D, customer, true);
         Map<Double, Boolean> expectedLoanMap = new HashMap<>();
         expectedLoanMap.put(20000D, true);
@@ -89,7 +85,7 @@ class LoanServiceImplTest {
 
     @Test
     void applyLoan_with200CreditScore_And9000Salary() {
-        Customer customer = new Customer("Dummy", "Test",12345678200L, "1234567890",9000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678200L, "1234567890", 9000D);
         Map<Double, Boolean> expectedLoanMap = new HashMap<>();
         expectedLoanMap.put(0D, false);
 
@@ -104,7 +100,7 @@ class LoanServiceImplTest {
 
     @Test
     void applyLoan_with10000CreditScore_And3000Salary() {
-        Customer customer = new Customer("Dummy", "Test",12345678910L, "1234567890",3000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 3000D);
         Loan expectedLoan = new Loan(1L, 12000D, customer, true);
         Map<Double, Boolean> expectedLoanMap = new HashMap<>();
         expectedLoanMap.put(12000D, true);
@@ -128,7 +124,7 @@ class LoanServiceImplTest {
 
     @Test
     void applyLoan_with8000CreditScore_And3000Salary() {
-        Customer customer = new Customer("Dummy", "Test",12345678800L, "1234567890",3000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678800L, "1234567890", 3000D);
         Loan expectedLoan = new Loan(1L, 10000D, customer, true);
         Map<Double, Boolean> expectedLoanMap = new HashMap<>();
         expectedLoanMap.put(10000D, true);
@@ -154,7 +150,7 @@ class LoanServiceImplTest {
 
     @Test
     void applyLoan_with200CreditScore_And3000Salary() {
-        Customer customer = new Customer("Dummy", "Test",12345678200L, "1234567890",3000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678200L, "1234567890", 3000D);
         Map<Double, Boolean> expectedLoanMap = new HashMap<>();
         expectedLoanMap.put(0D, false);
 
@@ -251,7 +247,7 @@ class LoanServiceImplTest {
 
     @Test
     void getLoans_WhenObjectNodeHasApprovedStatusFalse() {
-        Customer customer = new Customer("Dummy", "Test",12345678910L, "1234567890",9000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 9000D);
         List<Loan> expectedLoanList = Arrays.asList(new Loan(1L, 20000D, customer, true),
                 new Loan(2L, 10000D, customer, true),
                 new Loan(3L, 10000D, customer, true),
@@ -281,7 +277,7 @@ class LoanServiceImplTest {
 
     @Test
     void getLoans_WhenObjectNodeDoesNotHaveApprovedStatusFalse() {
-        Customer customer = new Customer("Dummy", "Test",12345678910L, "1234567890",9000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 9000D);
         List<Loan> expectedLoanList = Arrays.asList(new Loan(1L, 20000D, customer, true),
                 new Loan(2L, 10000D, customer, true),
                 new Loan(3L, 10000D, customer, true),
@@ -310,17 +306,17 @@ class LoanServiceImplTest {
     }
 
     @Test
-    void getLoans_WhenObjectNodeHasApprovedStatusTrue(){
-        Customer customer = new Customer("Dummy", "Test",12345678910L, "1234567890",9000D);
+    void getLoans_WhenObjectNodeHasApprovedStatusTrue() {
+        Customer customer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 9000D);
         List<Loan> allLoanList = Arrays.asList(new Loan(1L, 20000D, customer, true),
-                                               new Loan(2L, 10000D, customer, true),
-                                               new Loan(3L, 10000D, customer, true),
-                                               new Loan(4L, 0D, customer, false),
-                                               new Loan(5L, 0D, customer, false));
+                new Loan(2L, 10000D, customer, true),
+                new Loan(3L, 10000D, customer, true),
+                new Loan(4L, 0D, customer, false),
+                new Loan(5L, 0D, customer, false));
 
         List<Loan> expectedLoanList = Arrays.asList(new Loan(1L, 20000D, customer, true),
-                                                    new Loan(2L, 10000D, customer, true),
-                                                    new Loan(3L, 10000D, customer, true));
+                new Loan(2L, 10000D, customer, true),
+                new Loan(3L, 10000D, customer, true));
 
         Long tckn = 12345678910L;
         final ObjectMapper objectMapper = new ObjectMapper();
@@ -351,8 +347,7 @@ class LoanServiceImplTest {
         ObjectNode objectNode = objectMapper.createObjectNode();
 
 
-
-        assertThatThrownBy(() ->  loanService.getLoans(objectNode))
+        assertThatThrownBy(() -> loanService.getLoans(objectNode))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Provided body is not valid.\nBody needs to have an 11 digits value for TCKN." +
                         "\nExample:\n{\n\"tckn\" : \"12345678910\",\n\"approved\" : true\"\n}");
@@ -366,7 +361,7 @@ class LoanServiceImplTest {
         objectNode.put("tckn", 1234L);
 
 
-        assertThatThrownBy(() ->  loanService.getLoans(objectNode))
+        assertThatThrownBy(() -> loanService.getLoans(objectNode))
                 .isInstanceOf(IllegalTcknException.class)
                 .hasMessageContaining("TCKN needs to be 11 digits and can only contain only numbers.");
         verify(loanRepository, never()).findAllByCustomer_tckn(any());
@@ -379,7 +374,7 @@ class LoanServiceImplTest {
         objectNode.put("tckn", 12345678910L);
 
         when(customerService.existById(12345678910L)).thenReturn(false);
-        assertThatThrownBy(() ->  loanService.getLoans(objectNode))
+        assertThatThrownBy(() -> loanService.getLoans(objectNode))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Customer tckn: " + 12345678910L + " not found!");
         verify(loanRepository, never()).findAllByCustomer_tckn(any());
@@ -387,7 +382,7 @@ class LoanServiceImplTest {
 
     @Test
     void getApprovedLoansById() {
-        Customer customer = new Customer("Dummy", "Test",12345678910L, "1234567890",9000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 9000D);
 
         List<Loan> allLoanList = Arrays.asList(new Loan(1L, 20000D, customer, true),
                 new Loan(2L, 10000D, customer, true),
@@ -434,7 +429,7 @@ class LoanServiceImplTest {
 
     @Test
     void getAllLoansById() {
-        Customer customer = new Customer("Dummy", "Test",12345678910L, "1234567890",9000D);
+        Customer customer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 9000D);
 
         List<Loan> expectedLoanList = Arrays.asList(new Loan(1L, 20000D, customer, true),
                 new Loan(2L, 10000D, customer, true),
@@ -462,7 +457,7 @@ class LoanServiceImplTest {
     }
 
     @Test
-    void getAllLoansById_WhenCustomerDoesNotExist_ThrowNotFoundException(){
+    void getAllLoansById_WhenCustomerDoesNotExist_ThrowNotFoundException() {
         Long tckn = 12345678910L;
 
         when(customerService.existById(tckn)).thenReturn(false);
@@ -476,7 +471,7 @@ class LoanServiceImplTest {
 
     @Test
     void deleteAllByCustomer_tckn() {
-        Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer deletedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         doNothing().when(loanRepository).deleteAllByCustomer_Tckn(anyLong());
         when(customerService.existById(deletedCustomer.getTckn())).thenReturn(true);
@@ -485,12 +480,13 @@ class LoanServiceImplTest {
 
         verify(loanRepository, times(1)).deleteAllByCustomer_Tckn(deletedCustomer.getTckn());
     }
+
     /**
      * LoanService.deleteCustomer() is now deprecated. The test might be disabled later as it is no longer relevant.
      */
     @Test
     void deleteCustomer_NotExist_ThrowNotFoundException() {
-        Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer deletedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerService.existById(deletedCustomer.getTckn())).thenReturn(false);
 

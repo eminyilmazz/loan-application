@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CustomerMapper {
-    private CustomerMapper(){}
+    private CustomerMapper() {
+    }
+
     public static CustomerDto toDto(Customer customer) {
         return CustomerDto.builder()
                 .tckn(customer.getTckn())
@@ -16,7 +18,8 @@ public class CustomerMapper {
                 .monthlySalary(customer.getMonthlySalary())
                 .build();
     }
-    public static Customer toEntity(CustomerDto customerDto){
+
+    public static Customer toEntity(CustomerDto customerDto) {
         return Customer.builder()
                 .tckn(customerDto.getTckn())
                 .name(customerDto.getName())
@@ -25,6 +28,7 @@ public class CustomerMapper {
                 .monthlySalary(customerDto.getMonthlySalary())
                 .build();
     }
+
     public static CustomerSmsDto toSmsDto(Customer customer, LocalDateTime ldt, Double amount) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String date = ldt.format(formatter);

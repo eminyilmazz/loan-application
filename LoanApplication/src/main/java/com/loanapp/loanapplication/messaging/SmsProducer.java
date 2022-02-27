@@ -12,7 +12,7 @@ public class SmsProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void messageOnLoanApproval(CustomerSmsDto customerSmsDto){
+    public void messageOnLoanApproval(CustomerSmsDto customerSmsDto) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY, customerSmsDto);
         System.out.println("Message Sent");
     }

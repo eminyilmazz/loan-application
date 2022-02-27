@@ -2,12 +2,15 @@ package com.loanapp.loanapplication.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,7 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "loans")
-public class Loan {
+public class Loan implements Serializable {
 
     @JsonIgnore
     @Id
@@ -49,12 +52,13 @@ public class Loan {
         this.approvalStatus = approvalStatus;
     }
 
-    public Loan(LocalDateTime approvalDate, boolean approvalStatus, Double loanAmount, Customer customer){
+    public Loan(LocalDateTime approvalDate, boolean approvalStatus, Double loanAmount, Customer customer) {
         this.approvalDate = approvalDate;
         this.approvalStatus = approvalStatus;
         this.loanAmount = loanAmount;
         this.customer = customer;
     }
 
-    public Loan() {}
+    public Loan() {
+    }
 }

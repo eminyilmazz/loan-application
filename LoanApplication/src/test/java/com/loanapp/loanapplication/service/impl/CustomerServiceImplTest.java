@@ -12,7 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static com.loanapp.loanapplication.model.dto.CustomerMapper.toDto;
 import static java.util.Optional.empty;
@@ -36,12 +39,12 @@ class CustomerServiceImplTest {
     @Test
     void getAll() {
         List<Customer> expectedCustomerList = Arrays.asList(
-                new Customer("Ainsley", "Hopper",10000000850L, "8794964085",5369D),
-                new Customer("Thor","Parks",10000000950L,"8343458383",6676),
-                new Customer("Merritt","Woods",10000000050L,"6154776828",6858),
-                new Customer("Bruno","Avila",10000000810L,"3757713291",4934),
-                new Customer("Sacha","Ashley",10000000910L,"8542845257",3975),
-                new Customer("Hayes","Willis",10000000010L,"1724644137",4887)
+                new Customer("Ainsley", "Hopper", 10000000850L, "8794964085", 5369D),
+                new Customer("Thor", "Parks", 10000000950L, "8343458383", 6676),
+                new Customer("Merritt", "Woods", 10000000050L, "6154776828", 6858),
+                new Customer("Bruno", "Avila", 10000000810L, "3757713291", 4934),
+                new Customer("Sacha", "Ashley", 10000000910L, "8542845257", 3975),
+                new Customer("Hayes", "Willis", 10000000010L, "1724644137", 4887)
         );
 
         when(customerRepository.findAll()).thenReturn(expectedCustomerList);
@@ -50,12 +53,12 @@ class CustomerServiceImplTest {
 
         assertEquals(expectedCustomerList.size(), actualCustomerList.size());
 
-        for (Customer expectedCustomer: expectedCustomerList) {
+        for (Customer expectedCustomer : expectedCustomerList) {
             Optional<Customer> actualCustomer = actualCustomerList.stream()
                     .filter((actual) -> actual.getTckn() == expectedCustomer.getTckn()).findFirst();
 
             assertEquals(expectedCustomer.getName() + expectedCustomer.getLastName(),
-                                      actualCustomer.get().getName() + actualCustomer.get().getLastName());
+                    actualCustomer.get().getName() + actualCustomer.get().getLastName());
 
             assertEquals(expectedCustomer.getPhoneNumber(), actualCustomer.get().getPhoneNumber());
 
@@ -65,7 +68,7 @@ class CustomerServiceImplTest {
 
     @Test
     void getByTckn() {
-        Customer expectedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer expectedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.findById(12345678910L)).thenReturn(Optional.of(expectedCustomer));
 
@@ -73,9 +76,10 @@ class CustomerServiceImplTest {
 
         assertEquals(expectedCustomer, actualCustomer);
     }
+
     @Test
     void getByTckn_NotExist_ThrowsNotFoundException() {
-        Customer expectedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer expectedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.findById(12345678910L)).thenReturn(empty());
 
@@ -86,7 +90,7 @@ class CustomerServiceImplTest {
 
     @Test
     void addCustomer() {
-        Customer addedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer addedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         customerService.addCustomer(toDto(addedCustomer));
 
@@ -103,7 +107,7 @@ class CustomerServiceImplTest {
 
     @Test
     void addCustomer_TcknAlreadyExists_ThrowDuplicateTcknException() {
-        Customer addedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer addedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.existsById(12345678910L)).thenReturn(true);
 
@@ -116,7 +120,7 @@ class CustomerServiceImplTest {
 
     @Test
     void updateCustomer() {
-        Customer updatedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer updatedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.existsById(updatedCustomer.getTckn())).thenReturn(true);
 
@@ -135,7 +139,7 @@ class CustomerServiceImplTest {
 
     @Test
     void updateCustomer_NotExist_ThrowNotFoundException() {
-        Customer updatedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer updatedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.existsById(updatedCustomer.getTckn())).thenReturn(false);
 
@@ -148,7 +152,7 @@ class CustomerServiceImplTest {
 
     @Test
     void deleteCustomer() {
-        Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer deletedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.existsById(deletedCustomer.getTckn())).thenReturn(true);
         doNothing().when(customerRepository).deleteById(12345678910L);
@@ -160,7 +164,7 @@ class CustomerServiceImplTest {
 
     @Test
     void deleteCustomer_NotExist_ThrowNotFoundException() {
-        Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer deletedCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.existsById(deletedCustomer.getTckn())).thenReturn(false);
 
@@ -173,7 +177,7 @@ class CustomerServiceImplTest {
 
     @Test
     void existById() {
-        Customer existingCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer existingCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         when(customerRepository.existsById(existingCustomer.getTckn())).thenReturn(true);
 

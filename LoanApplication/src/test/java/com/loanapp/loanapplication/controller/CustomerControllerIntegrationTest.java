@@ -33,11 +33,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +50,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = LoanApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CustomerControllerIntegrationTest {
 
+    private static List<Customer> allCustomers = Arrays.asList(new Customer("Ainsley", "Hopper", 10000000850L, "8794964085", 5369D),
+            new Customer("Thor", "Parks", 10000000950L, "8343458383", 6676D),
+            new Customer("Merritt", "Woods", 10000000050L, "6154776828", 6858D),
+            new Customer("Bruno", "Avila", 10000000810L, "3757713291", 4934D),
+            new Customer("Sacha", "Ashley", 10000000910L, "8542845257", 3975D),
+            new Customer("Hayes", "Willis", 10000000010L, "1724644137", 4887D));
+    private static List<Loan> loanListOf850 = Arrays.asList(new Loan(stringToDate("2021-03-08 21:38:39.161"), true, 20000D, allCustomers.get(0)),
+            new Loan(stringToDate("2022-01-16 22:33:52.164"), false, 0D, allCustomers.get(0)),
+            new Loan(stringToDate("2022-02-12 20:52:08.164"), true, 10000d, allCustomers.get(0)));
+    private static List<Loan> approvedLoanListOf850 = Arrays.asList(new Loan(stringToDate("2021-03-08 21:38:39.161"), true, 20000D, allCustomers.get(0)),
+            new Loan(stringToDate("2022-02-12 20:52:08.164"), true, 10000d, allCustomers.get(0)));
     @Autowired
     private LoanService loanService;
     @LocalServerPort
@@ -58,6 +73,14 @@ class CustomerControllerIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    /**
+     * This utility method is to build a LocalDateTime from String.
+     */
+    private static LocalDateTime stringToDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        return LocalDateTime.parse(dateString, formatter);
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -102,7 +125,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void addCustomer() throws JsonProcessingException {
-        Customer newCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer newCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         String _add = "/customer/add";
 
@@ -121,7 +144,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void addCustomer_TcknAlreadyExist_ThrowsDuplicateTcknException() throws JsonProcessingException {
-        Customer newCustomer = new Customer("Dummy", "Test",10000000850L, "1234567890",1234D);
+        Customer newCustomer = new Customer("Dummy", "Test", 10000000850L, "1234567890", 1234D);
 
         String _add = "/customer/add";
 
@@ -137,7 +160,7 @@ class CustomerControllerIntegrationTest {
     @Test
     void updateCustomer() throws JsonProcessingException {
         //adding a customer first
-        Customer newCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer newCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         String _add = "/customer/add";
 
@@ -146,7 +169,7 @@ class CustomerControllerIntegrationTest {
         HttpEntity<Customer> postHttpEntity = new HttpEntity<Customer>(newCustomer, headers);
         testRestTemplate.exchange(formFullURLWithPort(_add), HttpMethod.POST, postHttpEntity, String.class);
 
-        Customer updatedCustomer = new Customer("Test", "Dummy",12345678910L, "0987654321",4321D);
+        Customer updatedCustomer = new Customer("Test", "Dummy", 12345678910L, "0987654321", 4321D);
 
         String _update = "/customer/update";
 
@@ -164,20 +187,20 @@ class CustomerControllerIntegrationTest {
     @Test
     void updateCustomer_TcknDoesNotExist_ThrowsNotFoundException() throws Exception {
         String _update = "/customer/update";
-        Customer updatedCustomer = new Customer("Test", "Dummy",12345678910L, "0987654321",4321D);
+        Customer updatedCustomer = new Customer("Test", "Dummy", 12345678910L, "0987654321", 4321D);
 
         try {
             HttpEntity<Customer> updateHttpEntity = new HttpEntity<Customer>(updatedCustomer, headers);
             ResponseEntity<String> updateResponseEntity = testRestTemplate.exchange(
                     formFullURLWithPort(_update), HttpMethod.PUT, updateHttpEntity, String.class);
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             assertEquals("Customer tckn: 12345678910 not found!", e.getMessage());
         }
     }
 
     @Test
     void deleteCustomer() throws JsonProcessingException {
-        Customer newCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+        Customer newCustomer = new Customer("Dummy", "Test", 12345678910L, "1234567890", 1234D);
 
         String _add = "/customer/add";
 
@@ -207,7 +230,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void applyLoan() throws Exception {
-        Customer customer = new Customer("Thor","Parks",10000000950L,"8343458383",6676D);
+        Customer customer = new Customer("Thor", "Parks", 10000000950L, "8343458383", 6676D);
         Map<Double, Boolean> expectedLoanMap = new HashMap<>();
         expectedLoanMap.put(26704D, true);
 
@@ -226,7 +249,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void applyLoan_NotValidTckn_ThrowsIllegalTcknException() throws Exception {
-        Customer customer = new Customer("Thor","Parks",10000000950L,"8343458383",6676D);
+        Customer customer = new Customer("Thor", "Parks", 10000000950L, "8343458383", 6676D);
 
         String _applyLoan = "/customer/loan/apply";
 
@@ -238,7 +261,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void getLoans_ApprovedTrue() throws Exception {
-        Customer customer = new Customer("Thor","Parks",10000000850L,"8343458383",6676D);
+        Customer customer = new Customer("Thor", "Parks", 10000000850L, "8343458383", 6676D);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
@@ -261,7 +284,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void getLoans_ApprovedFalse() throws Exception {
-        Customer customer = new Customer("Ainsley","Hopper",10000000850L,"8794964085",5369D);
+        Customer customer = new Customer("Ainsley", "Hopper", 10000000850L, "8794964085", 5369D);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
@@ -284,7 +307,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void getLoans_RequestBodyDoesNotHaveTckn_ThrowsIllegalArgumentException() throws Exception {
-        Customer customer = new Customer("Thor","Parks",10000000950L,"8343458383",6676D);
+        Customer customer = new Customer("Thor", "Parks", 10000000950L, "8343458383", 6676D);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
@@ -304,7 +327,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void getLoans_NotValidTckn_ThrowsIllegalTcknException() throws Exception {
-        Customer customer = new Customer("Thor","Parks",10000000950L,"8343458383",6676D);
+        Customer customer = new Customer("Thor", "Parks", 10000000950L, "8343458383", 6676D);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
@@ -320,6 +343,7 @@ class CustomerControllerIntegrationTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalTcknException))
                 .andExpect(result -> assertEquals("TCKN needs to be 11 digits and can only contain only numbers.", result.getResolvedException().getMessage()));
     }
+
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
         Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
@@ -345,23 +369,4 @@ class CustomerControllerIntegrationTest {
     private String formFullURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
     }
-
-    /**
-     * This utility method is to build a LocalDateTime from String.
-     * */
-    private static LocalDateTime stringToDate(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        return LocalDateTime.parse(dateString, formatter);
-    }
-    private static List<Customer> allCustomers = Arrays.asList(new Customer("Ainsley","Hopper",10000000850L,"8794964085",5369D),
-                                                               new Customer("Thor","Parks",10000000950L,"8343458383",6676D),
-                                                               new Customer("Merritt","Woods",10000000050L,"6154776828",6858D),
-                                                               new Customer("Bruno","Avila",10000000810L,"3757713291",4934D),
-                                                               new Customer("Sacha","Ashley",10000000910L,"8542845257",3975D),
-                                                               new Customer("Hayes","Willis",10000000010L,"1724644137",4887D));
-    private static List<Loan> loanListOf850 = Arrays.asList(new Loan(stringToDate("2021-03-08 21:38:39.161"),true,20000D, allCustomers.get(0)),
-            new Loan(stringToDate("2022-01-16 22:33:52.164"),false,0D, allCustomers.get(0)),
-            new Loan(stringToDate("2022-02-12 20:52:08.164"),true,10000d, allCustomers.get(0)));
-    private static List<Loan> approvedLoanListOf850 = Arrays.asList(new Loan(stringToDate("2021-03-08 21:38:39.161"),true,20000D, allCustomers.get(0)),
-            new Loan(stringToDate("2022-02-12 20:52:08.164"),true,10000d, allCustomers.get(0)));
 }

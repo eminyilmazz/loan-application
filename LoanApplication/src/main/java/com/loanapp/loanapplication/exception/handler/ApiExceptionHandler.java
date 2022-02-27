@@ -19,7 +19,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach((error) -> {
+        e.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
@@ -27,7 +27,7 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
-    @ExceptionHandler ({NotFoundException.class})
+    @ExceptionHandler({NotFoundException.class})
     protected ResponseEntity<Map<String, String>> notFoundException(NotFoundException e) {
         Map<String, String> error = new HashMap<>();
         error.put("message", e.getMessage());
@@ -35,22 +35,23 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({IllegalTcknException.class})
-    protected ResponseEntity<Map<String, String>> tcknException(IllegalTcknException e){
+    protected ResponseEntity<Map<String, String>> tcknException(IllegalTcknException e) {
         Map<String, String> error = new HashMap<>();
         error.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler({IllegalArgumentException.class})
-    protected ResponseEntity<Map<String, String>> illegalArgumentException(IllegalArgumentException e){
+    protected ResponseEntity<Map<String, String>> illegalArgumentException(IllegalArgumentException e) {
         Map<String, String> error = new HashMap<>();
         error.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
     @ExceptionHandler({DuplicateTcknException.class})
-    protected ResponseEntity<Map<String, String>> tcknException(DuplicateTcknException e){
-            Map<String, String> error = new HashMap<>();
-            error.put("message", e.getMessage());
+    protected ResponseEntity<Map<String, String>> tcknException(DuplicateTcknException e) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }
