@@ -4,7 +4,7 @@ About
 ---
 
 &nbsp;&nbsp;&nbsp;&nbsp;This is Spring Boot project is developed for PayCore Java Spring Bootcamp by Patika.dev.  
-Soul purpose of this project is to test my knowledge, research, and overcome my weaknesses.  
+The Soul purpose of this project is to test my knowledge, research, and overcome my weaknesses.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;This is a backend service for loan application. 
 It is designed to expose RESTful API sticking to the standards as much as possible.
@@ -21,21 +21,21 @@ It is designed to expose RESTful API sticking to the standards as much as possib
 **Tech preferences**  
 
 &nbsp;&nbsp;&nbsp;&nbsp;**RabbitMQ:** is a commonly used AMQP message broker. I preferred it
-due to its simplicity and compatibility in both small and bigger scale. It is used to simulate an SMS Service that is supposedly
+due to its simplicity and compatibility on both small and bigger scales. It is used to simulate an SMS Service that is supposedly
 called on loan approval.  
   
 &nbsp;&nbsp;&nbsp;&nbsp;**PostgreSQL:** PostgreSQL is a powerful, open source object-relational database system.
 Being object-relational served better for my purposes and dependencies over other databases.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;**Maven:** Maven is a build automation, project management and comprehension tool. Maven is prefered
+&nbsp;&nbsp;&nbsp;&nbsp;**Maven:** Maven is a build automation, project management and comprehension tool. Maven is preferred
 over other technologies for its enhanced dependency and plugin management.
 
-&nbsp;&nbsp;&nbsp;&nbsp;**Spring Data JPA:** This Spring technology is used with hibernate ORM to build a simple persistance layer
+&nbsp;&nbsp;&nbsp;&nbsp;**Spring Data JPA:** This Spring technology is used with hibernate ORM to build a simple persistence layer
 quickly.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;**Swagger:** Swagger is used for API documentation following OpenAPI 3 specifications.
 
-&nbsp;&nbsp;&nbsp;&nbsp;Architecture of the service is also done in n-layered design. This helped to achieve separation of components
+&nbsp;&nbsp;&nbsp;&nbsp;Architecture of the service is also done in n-layered design. This helped to achieve the separation of components
 such as service, repository, controller, model.
 
 How To Run and Requirements
@@ -50,7 +50,7 @@ How To Run and Requirements
 
 **Run:**
 
-1. Configure data resource in application.properties
+1. Configure data resources in application.properties
 2. Configure RabbitMQ in application.properties unless default settings won't be used.
 3. Navigate to the project files, and run ```mvn clean install```
 4. Then run ```mvn spring-boot:run```
@@ -58,6 +58,15 @@ How To Run and Requirements
 &nbsp;&nbsp;&nbsp;&nbsp;The server will run on localhost:8080 by default and PostgreSQL will have dummy data from dummy.sql.  
 &nbsp;&nbsp;&nbsp;&nbsp;If you don't want to run with maven cmd commands, open the project as a maven project with your IDE.  
 &nbsp;&nbsp;&nbsp;&nbsp;Don't forget to run it with maven clean install.
+
+**Run in a container with Docker:**
+
+1. Navigate to the project files, and run ```mvn clean install```
+2. Then create an image with ```docker build -t loanapplication/loan-application-service .```
+3. Build container via docker-compose with ```docker-compose build```
+4. Run the container with ```docker-compose up```
+
+&nbsp;&nbsp;&nbsp;&nbsp;Container exposes 8080 by default. 
 
 Diagrams
 ===
@@ -79,11 +88,11 @@ Improvements
 ===
 
 ---
-* On service level, there are some unnecessary cross dependencies. In the future, I plan to optimize it
+* On the service level, there are some unnecessary cross dependencies. In the future, I plan to optimize it
 to have better and more isolated services for Loan and Customer.
 
 * Some tests are not completely relevant. In controller integration tests, some lists of loans only compared as
-JSON Strings. This is a go around solution for serialization / deserialization and comprassion issues with date data type. 
+JSON Strings. This is a go-around solution for serialization/deserialization and compression issues with the date data type. 
 
 
 
@@ -92,5 +101,5 @@ Other
 
 ---
 
-As I previously mentioned, this is a project I tried to learn with and experiment what I learnt. Any suggestions, feedbacks are always welcome. 
+As I previously mentioned, this is a project I tried to learn with and experiment with what I learned. Any suggestions, feedback is always welcome. 
 If you want to reach out to me for any reason, you can contact me on [Github](https://github.com/eminyilmazz) as well as [Linked.in](https://www.linkedin.com/in/eminyilmz/) and Discord @ Emin#4100.
