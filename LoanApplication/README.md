@@ -17,6 +17,7 @@ It is designed to expose RESTful API sticking to the standards as much as possib
 5. Maven
 6. RabbitMQ
 7. Swagger
+8. Docker
 
 **Tech preferences**  
 
@@ -34,6 +35,8 @@ over other technologies for its enhanced dependency and plugin management.
 quickly.  
 
 **Swagger:** Swagger is used for API documentation following OpenAPI 3 specifications.
+
+**Docker:** Containerized using docker.
 
 Architecture of the service is also done in n-layered design. This helped to achieve the separation of components
 such as service, repository, controller, model.
